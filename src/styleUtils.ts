@@ -1,14 +1,15 @@
-import { blendColorsFlutter, getColorFlutter } from "./colorUtils";
+import { blendColorsFlutter, getColorFlutter } from "../colorUtils";
+import { getSpacing, getLineHeight } from "./nodeUtils";
 
 interface TextStyleData {
-    name: string;
-    fontSize: number | undefined;
-    letterSpacing: number | undefined;
-    Height: number | undefined;
-    fontWeight: number | undefined;
-    decoration: TextDecoration | undefined;
-    color: string | undefined;
-    fontFamily: string | undefined;
+  name: string;
+  fontSize: number | undefined;
+  letterSpacing: number | undefined;
+  Height: number | undefined;
+  fontWeight: number | undefined;
+  decoration: TextDecoration | undefined;
+  color: string | undefined;
+  fontFamily: string | undefined;
 }
 
 export function getSolidPaints(style: PaintStyle): SolidPaint[] {
@@ -48,30 +49,6 @@ export function fetchColorStyles() {
   }
 
   figma.ui.postMessage({ type: 'colorStyles', data: paintStyleData });
-}
-
-export function getSpacing(textNode: TextNode) {
-    if (textNode.letterSpacing !== figma.mixed) {
-        const spacing = textNode.letterSpacing;
-        if (spacing.unit === "PIXELS") {
-        return spacing.value;
-        } else {
-        if (textNode.fontSize !== figma.mixed) {
-            return textNode.fontSize * spacing.value;
-        }
-        }
-    }
-}
-
-export function getLineHeight(textNode: TextNode) {
-    if (textNode.lineHeight !== figma.mixed) {
-        const spacing = textNode.lineHeight;
-        if (spacing.unit === "PIXELS") {
-        return spacing.value;
-        } else {
-        return 0;
-        }
-    }
 }
 
 export function fetchTextStyles(textNodes: TextNode[]) {

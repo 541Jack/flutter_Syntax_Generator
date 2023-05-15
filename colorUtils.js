@@ -1,10 +1,10 @@
-function rgbToHex(rgb) {
+export function rgbToHex(rgb) {
     const r = Math.floor(rgb.r * 255);
     const g = Math.floor(rgb.g * 255);
     const b = Math.floor(rgb.b * 255);
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
-function convertToARGBHex(color) {
+export function convertToARGBHex(color) {
     const alpha = Math.round(color.a * 255);
     const red = Math.round(color.r * 255);
     const green = Math.round(color.g * 255);
