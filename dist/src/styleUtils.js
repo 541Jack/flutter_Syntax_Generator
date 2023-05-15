@@ -1,4 +1,4 @@
-import { blendColorsFlutter, getColorFlutter } from "../colorUtils";
+import { blendColorsFlutter, getColorFlutter } from "../../colorUtils";
 import { getSpacing, getLineHeight } from "./nodeUtils";
 export function getSolidPaints(style) {
     const solidPaints = [];

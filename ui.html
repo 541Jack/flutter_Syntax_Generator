@@ -85,7 +85,7 @@
       if (pluginMessage.type === "colorStyles") {
         const styleData = pluginMessage.data;
         for (let style of styleData) {
-          resultString = resultString + `<li> static const Color ${style.name} = Color(${style.color})</li>`;
+          resultString = resultString + `<li> static const Color ${parseVarName(style.name)} = Color(${style.color})</li>`;
         }
       }
       if (pluginMessage.type === "textStyles") {
