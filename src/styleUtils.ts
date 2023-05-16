@@ -32,6 +32,7 @@ export function getColor(paintStyle: PaintStyle) {
       paints.push(style);
     }
   }
+  console.log(paints);
   //blend its color and return the result hex
   return blendColorsFlutter(paints);
 }
