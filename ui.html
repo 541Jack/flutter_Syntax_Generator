@@ -18,7 +18,7 @@
     button {
       border: none;
       padding: 10px 20px;
-      margin-right: 10px;
+      margin: 10px;
       font-size: 18px;
       cursor: pointer;
       background-color: #008CBA; /* Blue */
@@ -40,6 +40,18 @@
       border-radius: 5px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 5px;
+      background-color: #fff;
+      font-size: 16px;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
     pre {
       font-family: 'Courier New', monospace;
     }
@@ -49,6 +61,9 @@
   <h1>Code Generator</h1>
   <button id="colorButton" onclick="requestColorStyles()">Color</button>
   <button id="texrtButton" onclick="requestTextStyles()">Text</button>
+  <button id="texrtButton" onclick="requestPrimaryTextStyles()">Text by Color</button>
+  <input type="text" id="myInput" placeholder="Enter Color">
+
   <ul id="styles-list"></ul>
   <script>
     // Select the ul tag
@@ -61,6 +76,9 @@
     }
     function requestTextStyles() {
       window.parent.postMessage({ pluginMessage: { type: 'requestTextStyles' } }, '*');
+    }
+    function requestPrimaryTextStyles() {
+      window.parent.postMessage({ pluginMessage: { type: 'requestPrimaryTextStyles' } }, '*');
     }
     function parseVarName(input) {
         return input
@@ -88,7 +106,7 @@
           resultString = resultString + `<li> static const Color ${parseVarName(style.name)} = Color(${style.color})</li>`;
         }
       }
-      if (pluginMessage.type === "textStyles") {
+      if (pluginMessage.type === "textStyles" || pluginMessage.type === "primaryTextStyles") {
         const styleData = pluginMessage.data;
         //console.log('styleData.name is ' + styleData.name);
         //const varName = parseVarName(styleData.name);
@@ -97,6 +115,13 @@
           const varName = parseVarName(style.name);
           const roundedNumber = style.letterSpacing.toFixed(1);
           const height = calculateHeight(style.Height, style.fontSize).toFixed(3);
+          if (height < 0) {
+            resultString += `<code><pre>
+              Text Height AUTO, please check the height of the text style in Figma
+              <\pre><\code>`;
+          }
+          else {
+            if (pluginMessage.type === "textStyles") {
           resultString += `<code><pre>
 static TextStyle ${varName} () {
   return TextStyle(
@@ -109,6 +134,27 @@ static TextStyle ${varName} () {
     fontFamily: '${style.fontFamily}'
   );
 }<\pre><\code>`;
+            }
+            else {
+              const inputElement = document.getElementById("myInput");
+              let colorText = "CustomThemeColor.textMainDefault"
+              if (inputElement.value.trim() !== "") {
+                colorText = inputElement.value.trim();
+              }
+              resultString += `<code><pre>
+static TextStyle ${varName} ({Color? color = ${colorText}}) {
+  return TextStyle(
+    fontSize: ${style.fontSize},
+    letterSpacing: ${roundedNumber},
+    height: ${height},
+    fontWeight: FontWeight.w${style.fontWeight},
+    decoration: TextDecoration.${style.decoration.toLowerCase()},
+    color: color,
+    fontFamily: '${style.fontFamily}'
+  );
+}<\pre><\code>`;
+            }
+          }
         }
       }
       if (stylesListElement !== null) {

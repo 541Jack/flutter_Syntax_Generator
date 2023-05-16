@@ -32,12 +32,15 @@ export function findTextNodes(node: SceneNode): TextNode[] {
   }
   
   export function getLineHeight(textNode: TextNode) {
-    if (textNode.lineHeight !== figma.mixed) {
+    if (textNode.lineHeight !== figma.mixed && textNode.fontSize !== figma.mixed) {
         const spacing = textNode.lineHeight;
         if (spacing.unit === "PIXELS") {
           return spacing.value;
-        } else {
-          return 0;
+        } else if (spacing.unit === "PERCENT") {
+          return (spacing.value / 100) * textNode.fontSize;
+        }
+        else {
+          return -1;
         }
       }
     }

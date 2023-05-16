@@ -40,11 +40,12 @@ export function getColor(paintStyle: PaintStyle) {
 export function fetchColorStyles() {
   const paintStyles = figma.getLocalPaintStyles();
   const paintStyleData = [];
+  console.log(paintStyles);
 
   for (const paintStyle of paintStyles) {
     const blendedColors = getColorFlutter(paintStyle.paints);
     paintStyleData.push({
-      name: paintStyle.name,
+      name: parseName(paintStyle.name),
       color: blendedColors
     });
   }
@@ -52,7 +53,12 @@ export function fetchColorStyles() {
   figma.ui.postMessage({ type: 'colorStyles', data: paintStyleData });
 }
 
-export function fetchTextStyles(textNodes: TextNode[]) {
+export function parseName(name: string): string {
+  let parts = name.split("/");
+  return parts[0] + " " + parts[parts.length - 1];
+}
+
+export function fetchTextStyles(textNodes: TextNode[], messageType: string) {
   const textStyleData: TextStyleData[] = [];
   textNodes.forEach(node => {
     let colorAssigned;
@@ -86,5 +92,10 @@ export function fetchTextStyles(textNodes: TextNode[]) {
       fontFamily: family,
     })
   });
-  figma.ui.postMessage({ type: 'textStyles', data: textStyleData });
+  if (messageType === 'requestTextStyles') {
+    figma.ui.postMessage({ type: 'textStyles', data: textStyleData });
+  }
+  else if (messageType === 'requestPrimaryTextStyles') {
+    figma.ui.postMessage({ type: 'primaryTextStyles', data: textStyleData });
+  }
 }
